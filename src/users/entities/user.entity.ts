@@ -1,0 +1,12 @@
+import { User } from '@prisma/client';
+
+export class UserEntity implements User {
+  id: number;
+  name: string;
+  lastName: string;
+  userName: string;
+  email: string;
+  password: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
