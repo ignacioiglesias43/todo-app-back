@@ -56,6 +56,16 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id: id },
       data: updateUserDto,
+      select: {
+        id: true,
+        name: true,
+        lastName: true,
+        userName: true,
+        email: true,
+        password: false,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 
