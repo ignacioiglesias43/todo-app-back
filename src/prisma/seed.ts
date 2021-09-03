@@ -8,23 +8,15 @@ const prisma = new PrismaClient();
 
 async function main() {
   for (const status of statuses) {
-    await prisma.status.upsert({
-      create: status,
-      update: {},
-      where: {
-        id: status.id,
-      },
+    await prisma.status.create({
+      data: status,
     });
   }
 
   for (const user of users) {
     const password = await hashPassword('secret');
-    await prisma.user.upsert({
-      create: { ...user, password },
-      update: {},
-      where: {
-        id: user.id,
-      },
+    await prisma.user.create({
+      data: { ...user, password },
     });
   }
 }
