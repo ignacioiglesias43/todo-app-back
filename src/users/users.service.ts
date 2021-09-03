@@ -2,14 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { hashPassword } from '../utils/hashPassword';
 
 export type FindUserByField = 'email' | 'userName';
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.prisma.user.create({ data: createUserDto });
+  async create(createUserDto: CreateUserDto) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { repeatPassword, ...user } = createUserDto;
+    const hashedPassword = await hashPassword(user.password);
+    return this.prisma.user.create({
+      data: { ...user, password: hashedPassword },
+      select: {
+        id: true,
+        name: true,
+        lastName: true,
+        userName: true,
+        email: true,
+        password: false,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 
   findOne(id: number) {

@@ -3,6 +3,12 @@ import { UsersService, FindUserByField } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { comparePassword } from '../utils/comparePassword';
 import { AuthUserDto } from './dto/auth-user.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+
+interface resultUserNotExists {
+  existsEmail?: boolean;
+  existsUserName?: boolean;
+}
 
 @Injectable()
 export class AuthService {
@@ -11,6 +17,33 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  /* This function validates if either email or username exists on db */
+  async validateUserNotExists(
+    email: string,
+    userName?: string,
+  ): Promise<resultUserNotExists> {
+    const result: resultUserNotExists = {};
+
+    const existsEmail = await this.usersService.findOneByEmailOrUserName(
+      'email',
+      email,
+    );
+
+    result.existsEmail = !!existsEmail;
+
+    if (userName) {
+      const existsUserName = await this.usersService.findOneByEmailOrUserName(
+        'userName',
+        userName,
+      );
+
+      result.existsUserName = !!existsUserName;
+    }
+
+    return result;
+  }
+
+  /* Validates if user exists either by email or username, and validates that password and recorded password match */
   async validateUser(field: string, fieldType: FindUserByField, pass: string) {
     const user = await this.usersService.findOneByEmailOrUserName(
       fieldType,
@@ -25,6 +58,12 @@ export class AuthService {
       return result;
     }
     return null;
+  }
+
+  async signup(user: CreateUserDto) {
+    const newUser = await this.usersService.create(user);
+
+    return this.login(newUser);
   }
 
   async login(user: AuthUserDto) {
