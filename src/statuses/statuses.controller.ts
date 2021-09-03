@@ -1,29 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 
 import { StatusesService } from './statuses.service';
-import { CreateStatusDto } from './dto/create-status.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('statuses')
+@Controller('status')
 export class StatusesController {
   constructor(private readonly statusesService: StatusesService) {}
-
-  @UseGuards(JwtAuthGuard)
-  @Post()
-  create(@Body() createStatusDto: CreateStatusDto) {
-    return this.statusesService.create(createStatusDto);
-  }
 
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -34,17 +17,5 @@ export class StatusesController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.statusesService.findOne(+id);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStatusDto: UpdateStatusDto) {
-    return this.statusesService.update(+id, updateStatusDto);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.statusesService.remove(+id);
   }
 }
