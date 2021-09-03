@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
+export type FindUserByField = 'email' | 'userName';
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
@@ -11,7 +12,7 @@ export class UsersService {
     return this.prisma.user.create({ data: createUserDto });
   }
 
-  findOne(id: number, isLogin = false) {
+  findOne(id: number) {
     return this.prisma.user.findUnique({
       where: { id: id },
       select: {
@@ -20,9 +21,17 @@ export class UsersService {
         lastName: true,
         userName: true,
         email: true,
-        password: isLogin,
+        password: false,
         createdAt: true,
         updatedAt: true,
+      },
+    });
+  }
+
+  findOneByEmailOrUserName(fieldType: FindUserByField, field: string) {
+    return this.prisma.user.findUnique({
+      where: {
+        [fieldType]: field,
       },
     });
   }
