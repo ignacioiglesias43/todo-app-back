@@ -20,7 +20,7 @@ export class AuthController {
   @Post('login')
   async login(@Body() body: AuthCredentialsDto) {
     const { email = '', password = '', userName = '' } = body;
-    if (email.length > 0 && password.length > 0) {
+    if ((email.length > 0 || userName.length > 0) && password.length > 0) {
       const user = await this.localStrategy.validate(password, email, userName);
 
       if (!user) {
@@ -30,7 +30,9 @@ export class AuthController {
       return this.authService.login(user);
     }
 
-    throw new BadRequestException('Email and Password are required.');
+    throw new BadRequestException(
+      'Password is required and at least E-Mail or username too.',
+    );
   }
 
   @Post('signup')
