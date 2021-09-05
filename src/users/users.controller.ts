@@ -16,9 +16,14 @@ import { UnauthorizedException } from '@nestjs/common';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get('own-info')
+  findOne(@Req() request) {
+    const user = request.user;
+    if (!user) {
+      throw new UnauthorizedException('Access denied.');
+    }
+    return this.usersService.findOne(+user?.userId);
   }
 
   @UseGuards(JwtAuthGuard)
