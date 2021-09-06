@@ -29,7 +29,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() body: UpdateUserDto, @Req() request) {
-    if (request.user.userId !== id) {
+    if (request.user.userId != id) {
       throw new UnauthorizedException(
         "Access denied, you're not the same user as you requested to update.",
       );
