@@ -25,7 +25,8 @@
     "prisma:generate": "npx prisma generate",
     "prisma:studio": "npx prisma studio",
     "prisma:seed": "npx prisma db seed --preview-feature",
-    "postinstall": "npm run prestart:prod"
+    "postinstall": "npm run prestart:prod",
+    "prestart:prod": "rimraf dist && npm run build"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.15",
